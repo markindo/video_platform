@@ -1,0 +1,17 @@
+{
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.enable": true,
+  "eslint.nodePath": "./node_modules/eslint",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "always"
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "typescript.suggest.autoImports": true,
+  "javascript.suggest.autoImports": true
+}

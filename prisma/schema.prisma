@@ -1,0 +1,63 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+enum UserRole {
+    UPLOADER
+    VIEWER
+    ADMIN
+}
+
+model User {
+    id        String      @id @default(cuid())
+    name      String
+    email     String      @unique
+    password  String
+    role      UserRole    @default(VIEWER)
+    approved  Boolean     @default(false)
+    videos    Video[]     @relation("UserVideos")
+    views     VideoView[] @relation("UserViews")
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+}
+
+model Video {
+    id          String      @id @default(cuid())
+    title       String
+    description String?
+    filePath    String
+    thumbnail   String?
+    duration    Float?
+    uploader    User        @relation("UserVideos", fields: [uploaderId], references: [id])
+    uploaderId  String
+    category    Category?   @relation(fields: [categoryId], references: [id])
+    categoryId  String?
+    views       VideoView[] @relation("VideoViews")
+    viewCount   Int         @default(0)
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+}
+
+model VideoView {
+    id       String   @id @default(cuid())
+    video    Video    @relation("VideoViews", fields: [videoId], references: [id])
+    videoId  String
+    user     User     @relation("UserViews", fields: [userId], references: [id])
+    userId   String
+    viewedAt DateTime @default(now())
+
+    @@unique([videoId, userId])
+}
+
+model Category {
+    id        String   @id @default(cuid())
+    name      String   @unique
+    videos    Video[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
