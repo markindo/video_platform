@@ -13,12 +13,14 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Register() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
   });
@@ -28,6 +30,34 @@ export default function Register() {
       ...form,
       [e.target.id]: e.target.value,
     });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("Registration successful!");
+        router.push("/login");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,11 +77,21 @@ export default function Register() {
         </CardHeader>
 
         <CardContent>
-          <form className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Email</Label>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                type="email"
                 value={form.email}
                 onChange={handleChange}
                 required

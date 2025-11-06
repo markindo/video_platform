@@ -8,8 +8,7 @@ generator client {
 }
 
 enum UserRole {
-    UPLOADER
-    VIEWER
+    USER
     ADMIN
 }
 
@@ -18,8 +17,9 @@ model User {
     name      String
     email     String      @unique
     password  String
-    role      UserRole    @default(VIEWER)
+    role      UserRole    @default(USER)
     approved  Boolean     @default(false)
+    canUpload Boolean     @default(false)
     videos    Video[]     @relation("UserVideos")
     views     VideoView[] @relation("UserViews")
     createdAt DateTime    @default(now())

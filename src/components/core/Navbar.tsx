@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { LogOut, Search, Upload } from "lucide-react";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export function Navbar() {
   return (
@@ -25,9 +26,11 @@ export function Navbar() {
 
       {/* button */}
       <div className="flex items-center gap-3">
-        <Button variant={"outline"}>
-          <Upload className="mr-2 h-4 w-4" /> Upload
-        </Button>
+        <Link href="/upload">
+          <Button variant={"outline"}>
+            <Upload className="mr-2 h-4 w-4" /> Upload
+          </Button>
+        </Link>
         <Button
           variant={"destructive"}
           onClick={() => signOut({ callbackUrl: "/" })}

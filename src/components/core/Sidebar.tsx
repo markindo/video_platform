@@ -12,44 +12,34 @@ import {
 } from "@/components/ui/sidebar";
 import clsx from "clsx";
 import { House, User } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-
-// Menu utama
-const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: House,
-  },
-  {
-    title: "User",
-    url: "/user",
-    icon: User,
-  },
-];
-
-// Submenu Master
-// const masterItems = [
-//   {
-//     title: "Device",
-//     url: "/master-device",
-//     icon: RadioReceiver,
-//   },
-//   {
-//     title: "Line",
-//     url: "/master-line",
-//     icon: Settings2,
-//   },
-//   // {
-//   //   title: "Role",
-//   //   url: "/master-role",
-//   //   icon: KeyRound,
-//   // },
-// ];
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
+  const { data: session } = useSession();
+
+  // ambil role user login
+  const role = session?.user?.role;
+
+  // menu utama (hide "Users" kalau bukan ADMIN)
+  const items = [
+    {
+      title: "Home",
+      url: "/",
+      icon: House,
+    },
+    ...(role === "ADMIN"
+      ? [
+          {
+            title: "Users",
+            url: "/users",
+            icon: User,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <Sidebar
@@ -63,7 +53,6 @@ export function AppSidebar() {
         )}
       >
         <div className="ml-1.5">
-          {/* Menu utama */}
           <SidebarGroup className="mt-16">
             <SidebarGroupContent>
               <SidebarMenu>
@@ -83,47 +72,6 @@ export function AppSidebar() {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-
-          {/* Collapsible Master */}
-          {/* <Collapsible className="group/collapsible ">
-            <SidebarGroup>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <CollapsibleTrigger className="flex w-full items-center">
-                      <Blocks className="mr-1 h-4 w-4" />
-                      <span>Master</span>
-                      <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                    </CollapsibleTrigger>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {masterItems.map((sub) => (
-                      <SidebarMenuItem key={sub.title}>
-                        <SidebarMenuButton
-                          asChild
-                          className={clsx(
-                            "pl-10",
-                            pathname === sub.url &&
-                              "!bg-[#002040] !text-white pl-10"
-                          )}
-                        >
-                          <a href={sub.url}>
-                            <sub.icon className="h-4 w-4" />
-                            <span>{sub.title}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </SidebarGroup>
-          </Collapsible> */}
         </div>
       </SidebarContent>
     </Sidebar>

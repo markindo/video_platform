@@ -6,21 +6,14 @@ const prisma = new PrismaClient();
 async function main() {
   const password = await bcrypt.hash("123456", 10);
 
-  const uploader = await prisma.user.create({
-    data: {
-      name: "Admin Uploader",
-      email: "uploader@a.com",
-      password,
-      role: UserRole.UPLOADER,
-    },
-  });
-
   const viewer = await prisma.user.create({
     data: {
-      name: "User Viewer",
-      email: "viewer@a.com",
+      name: "User 1",
+      email: "user@a.com",
       password,
-      role: UserRole.VIEWER,
+      role: UserRole.USER,
+      approved: true,
+      canUpload: true,
     },
   });
 
@@ -30,10 +23,12 @@ async function main() {
       email: "admin@a.com",
       password,
       role: UserRole.ADMIN,
+      approved: true,
+      canUpload: true,
     },
   });
 
-  console.log("Seeder done:", { uploader, viewer, admin });
+  console.log("Seeder done:", { viewer, admin });
 }
 
 main()
