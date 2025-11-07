@@ -57,9 +57,7 @@ export default function VideoCard() {
 
   if (videos.length === 0) {
     return (
-      <div className="text-center text-gray-500 mt-10">
-        Tidak ada video yang tersedia
-      </div>
+      <div className="text-center text-gray-500 mt-10">No videos found</div>
     );
   }
 
@@ -67,9 +65,9 @@ export default function VideoCard() {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {videos.map((video) => (
         <Link key={video.id} href={`/watch/${video.id}`}>
-          <Card className="overflow-hidden bg-transparent hover:bg-gray-50 transition cursor-pointer border-none shadow-none">
-            <CardContent className="p-2">
-              <div className="relative w-full h-[200px]">
+          <div className="overflow-hidden bg-transparent rounded-lg hover:bg-gray-100">
+            <div className="p-2">
+              <div className="relative w-full h-[240px]">
                 <Image
                   src={`/api/videos/stream/thumbnail?path=${encodeURIComponent(
                     video.thumbnail
@@ -87,8 +85,8 @@ export default function VideoCard() {
                 <p className="text-sm text-gray-500">{video.uploader}</p>
                 <p className="text-sm text-gray-400">{video.viewCount} views</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </Link>
       ))}
     </div>

@@ -6,33 +6,57 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { LogOut, Search, Upload } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function Navbar() {
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!search.trim()) return;
+    router.push(`/result?query=${encodeURIComponent(search.trim())}`);
+  };
+
   return (
     <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between bg-white px-4">
-      {/* sidebar + logo */}
+      {/* Sidebar + Logo */}
       <div className="flex items-center gap-3">
         <SidebarTrigger />
-        {/* <span className="font-bold text-xl text-gray-800">MyVideo</span> */}
       </div>
 
-      {/* search bar */}
-      <div className="hidden md:flex w-1/2 items-center gap-2">
-        <Input placeholder="Search videos..." className="w-full" />
-        <Button size="icon" variant="secondary">
+      {/* Search bar */}
+      <form
+        onSubmit={handleSearch}
+        className="hidden md:flex w-1/2 items-center gap-2"
+      >
+        <Input
+          placeholder="Search videos..."
+          className="w-full"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Button
+          size="icon"
+          variant="secondary"
+          type="submit"
+          className="cursor-pointer hover:bg-gray-200"
+        >
           <Search className="h-4 w-4" />
         </Button>
-      </div>
+      </form>
 
-      {/* button */}
+      {/* Buttons */}
       <div className="flex items-center gap-3">
         <Link href="/upload">
-          <Button variant={"outline"}>
+          <Button variant="outline">
             <Upload className="mr-2 h-4 w-4" /> Upload
           </Button>
         </Link>
+
         <Button
-          variant={"destructive"}
+          variant="destructive"
           onClick={() => signOut({ callbackUrl: "/" })}
         >
           <LogOut className="h-4 w-4" />

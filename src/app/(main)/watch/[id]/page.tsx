@@ -58,8 +58,8 @@ export default function WatchPage() {
             <span>{video.uploader?.name}</span>
           </div>
           <div className="flex items-center gap-2">
+            <span>{video.viewCount} views |</span>
             <span>{video.createdAt.split("T")[0]}</span>
-            <span>{video.viewCount} views</span>
           </div>
         </div>
 
@@ -80,7 +80,10 @@ export default function WatchPage() {
         <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2">
           {video.views?.length ? (
             video.views.map((viewer, index) => (
-              <div key={viewer.id + index} className="text-gray-600">
+              <div
+                key={viewer.id ?? `viewer-${index}`}
+                className="text-gray-600"
+              >
                 • {viewer.user?.name} - {viewer.user?.email}
               </div>
             ))

@@ -11,7 +11,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import clsx from "clsx";
-import { House, User } from "lucide-react";
+import { House, User, Users } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 
@@ -30,12 +30,17 @@ export function AppSidebar() {
       url: "/",
       icon: House,
     },
+    {
+      title: "Profile",
+      url: "/profile",
+      icon: User,
+    },
     ...(role === "ADMIN"
       ? [
           {
             title: "Users",
             url: "/users",
-            icon: User,
+            icon: Users,
           },
         ]
       : []),

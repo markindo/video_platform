@@ -27,3 +27,8 @@ export type VideoView = {
   userId: string;
   user: User;
 };
+
+export type Category = {
+  id: string;
+  name: string;
+};

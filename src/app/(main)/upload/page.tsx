@@ -1,20 +1,15 @@
 "use client";
 
+import { SelectInput } from "@/components/core/SelectInput";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Category } from "@/types";
 import { Film, Upload, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function UploadPage() {
@@ -25,11 +20,59 @@ export default function UploadPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState<{ id: string; label: string }[]>(
+    []
+  );
+  const [selectedCategory, setSelectedCategory] = useState<{
+    id: string;
+    label: string;
+  } | null>(null);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setVideoFile(e.target.files[0]);
       setPreviewUrl(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+        setCategories(
+          data.map((cat: Category) => ({ id: cat.id, label: cat.name }))
+        );
+      } catch (err) {
+        console.error("Failed to load categories", err);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const handleCreateCategory = async (label: string) => {
+    try {
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: label }),
+      });
+
+      if (!res.ok) throw new Error("Failed to create category");
+      const newCategory = await res.json();
+
+      const newOption = { id: newCategory.id, label: newCategory.name };
+      setCategories((prev) => [...prev, newOption]);
+      setSelectedCategory(newOption);
+      setCategory(newCategory.name);
+      toast.success(`Category "${label}" created`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to create category");
     }
   };
 
@@ -107,11 +150,9 @@ export default function UploadPage() {
                 <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors bg-gray-50">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <Upload className="size-12 text-gray-400 mb-4" />
-                    <p className="mb-2 text-gray-700">
-                      Click to upload or drag and drop
-                    </p>
+                    <p className="mb-2 text-gray-700">Click to upload</p>
                     <p className="text-sm text-gray-500">
-                      MP4, MOV, AVI (MAX. 2GB)
+                      MP4, MOV, AVI, WMV, MKV
                     </p>
                   </div>
                   <input
@@ -190,16 +231,24 @@ export default function UploadPage() {
 
                   <div>
                     <Label htmlFor="category">Category</Label>
-                    <Select onValueChange={(val) => setCategory(val)}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Technology">Technology</SelectItem>
-                        <SelectItem value="Education">Education</SelectItem>
-                        <SelectItem value="Music">Music</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="mt-2">
+                      <SelectInput
+                        options={categories}
+                        value={selectedCategory}
+                        onSelect={async (opt) => {
+                          if (!opt) return;
+
+                          if (opt.id === "new") {
+                            await handleCreateCategory(opt.label);
+                          } else {
+                            setSelectedCategory(opt);
+                            setCategory(opt.label);
+                          }
+                        }}
+                        placeholder="Select or create category..."
+                        isLoading={loadingCategories}
+                      />
+                    </div>
                   </div>
 
                   <div className="flex gap-3 pt-4">
