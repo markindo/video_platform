@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { LogOut, Search, Upload } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -12,6 +12,7 @@ import { useState } from "react";
 export function Navbar() {
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const { data: session } = useSession();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,12 +50,13 @@ export function Navbar() {
 
       {/* Buttons */}
       <div className="flex items-center gap-3">
-        <Link href="/upload">
-          <Button variant="outline">
-            <Upload className="mr-2 h-4 w-4" /> Upload
-          </Button>
-        </Link>
-
+        {session?.user?.canUpload && (
+          <Link href="/upload">
+            <Button variant="outline">
+              <Upload className="mr-2 h-4 w-4" /> Upload
+            </Button>
+          </Link>
+        )}
         <Button
           variant="destructive"
           onClick={() => signOut({ callbackUrl: "/" })}

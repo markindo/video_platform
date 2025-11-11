@@ -15,7 +15,9 @@ export default function LayoutContent({
       <Navbar />
 
       <div className="flex flex-1">
-        <aside className="z-10 min-w-16 max-w-48 bg-white">{sidebar}</aside>
+        <aside className="z-10 min-w-16 max-w-48 bg-white hidden md:block">
+          {sidebar}
+        </aside>
 
         <main className="flex-1 overflow-auto p-4 border">{children}</main>
       </div>
