@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     }
 
     // ✅ Build the absolute path correctly
-    const baseUploadDir = path.resolve("../video-storage");
+    const baseUploadDir = path.resolve("/video-storage");
     const filePath = path.join(baseUploadDir, video.filePath);
 
     if (!fs.existsSync(filePath)) {

@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: video-platform-app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - /platform-video/video-storage:/video-storage # bind mount
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    container_name: video-platform-db
+    environment:
+      POSTGRES_DB: video_platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1122
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
