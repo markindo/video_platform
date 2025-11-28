@@ -12,7 +12,7 @@ export async function GET(req: Request) {
 
   // Decode and get the base directory
   const decodedPath = decodeURIComponent(rawPath);
-  const baseUploadDir = path.resolve("/video-storage");
+  const baseUploadDir = process.env.UPLOAD_DIR!;
 
   // Join base directory with the relative path from DB
   const absolutePath = path.join(baseUploadDir, decodedPath);

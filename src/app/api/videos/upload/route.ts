@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   }
 
   // === 1. Simpan ke folder DI LUAR proyek ===
-  const baseUploadDir = path.resolve("/video-storage");
+  const baseUploadDir = process.env.UPLOAD_DIR!;
   const userDir = path.join(
     baseUploadDir,
     session.user.email.replace(/[@.]/g, "_")

@@ -3,6 +3,7 @@ version: "3.9"
 services:
   app:
     build: .
+    image: video_platform-app:latest
     container_name: video-platform-app
     ports:
       - "3000:3000"
@@ -11,7 +12,7 @@ services:
     depends_on:
       - db
     volumes:
-      - /platform-video/video-storage:/video-storage # bind mount
+      - /home/shabri/apps/platform-video/video-storage:/app/video-storage # bind mount
     restart: unless-stopped
 
   db:
@@ -24,7 +25,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - /home/shabri/apps/platform-video/postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
 volumes:
